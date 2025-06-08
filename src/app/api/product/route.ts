@@ -40,7 +40,7 @@ interface ExternalApiGoodsSku {
   unit_id: number | null;
   remaining_inventory: number;
   description: string;
-  sku_images: ExternalApiImage[]; // Assuming sku_images or images can be used
+  sku_images: ExternalApiImage[]; 
   images: ExternalApiImage[];
   is_enabled: boolean;
   sku_option_mappings: ExternalApiSkuOptionMapping[];
@@ -55,7 +55,6 @@ interface ExternalApiGoodData {
   goods_images: ExternalApiImage[];
   options: ExternalApiOption[];
   goods_sku: ExternalApiGoodsSku[];
-  // Add other fields from the external API if needed for transformation
 }
 
 interface ExternalApiResponse {
@@ -66,8 +65,6 @@ interface ExternalApiResponse {
 
 const PRODUCT_API_URL = 'https://orderhkuat.pokeguide.com/api/v1/goods/2';
 
-// This mock data should conform to YOUR ProductData structure,
-// as it's the fallback for your frontend.
 const mockProductData: ProductData = {
   id: 2,
   name_tc: "精靈口罩套TC (Mock)",
@@ -76,7 +73,7 @@ const mockProductData: ProductData = {
   goods_images: ["https://placehold.co/600x400.png?text=Mock+Product+Image+1"],
   option_groups: [
     {
-      id: 1,
+      id: 1, // Note: These IDs are for mock, live API IDs will be different
       name_tc: "角色TC (Mock)",
       name_en: "Character (Mock)",
       name_sc: "角色SC (Mock)",
@@ -86,7 +83,7 @@ const mockProductData: ProductData = {
       ],
     },
     {
-      id: 2,
+      id: 2, // Note: These IDs are for mock
       name_tc: "尺寸TC (Mock)",
       name_en: "Size (Mock)",
       name_sc: "尺寸SC (Mock)",
@@ -123,59 +120,104 @@ const mockApiResponse: ProductApiResponse = {
   data: mockProductData,
 };
 
+// Basic translation map based on provided API response
+const translations: Record<string, string> = {
+  "口罩套": "Mask Cover",
+  "我是口罩套": "I am a Mask Cover",
+  "大小": "Size",
+  "大": "Large",
+  "小": "Small",
+  "顏色": "Color", //  "颜色" (Simplified) also maps to Color
+  "黑": "Black",
+  "黃": "Yellow", // "黄" (Simplified) also maps to Yellow
+  "白": "White",
+  "產地": "Origin", // "产地" (Simplified) also maps to Origin
+  "香港": "Hong Kong",
+  "越南": "Vietnam",
+  "台灣": "Taiwan", // "台湾" (Simplified) also maps to Taiwan
+  // Add other common terms if needed
+};
+
+const translate = (text: string, lang: 'en' | 'tc' | 'sc' = 'en'): string => {
+  if (lang === 'en') {
+    return translations[text] || text; // Default to original text if no EN translation
+  }
+  // For TC/SC, API provides Chinese, so just return original or potentially map simplified to traditional if needed.
+  // For simplicity, we'll return the original text for tc/sc.
+  return text; 
+};
+
 function transformExternalGoodToProductData(externalGood: ExternalApiGoodData): ProductData {
-  const optionNameLangFallback = (name: string) => ({ name_tc: name, name_en: name, name_sc: name });
+  const name_en = translate(externalGood.goods_name, 'en');
+  const name_tc = externalGood.goods_name; 
+  const name_sc = externalGood.goods_name; // Assuming API provides traditional, or use a lib for S->T if necessary
+
+  const description_en = externalGood.description ? translate(externalGood.description, 'en') : undefined;
+  const description_tc = externalGood.description;
+  const description_sc = externalGood.description;
 
   const optionGroups: ProductOptionGroup[] = externalGood.options.map(opt => ({
     id: opt.option_id,
-    ...optionNameLangFallback(opt.option_name),
+    name_en: translate(opt.option_name, 'en'),
+    name_tc: opt.option_name,
+    name_sc: opt.option_name, // Fallback to TC
     options: opt.option_values.map(val => ({
       id: val.option_value_id,
-      ...optionNameLangFallback(val.option_value_name),
+      name_en: translate(val.option_value_name, 'en'),
+      name_tc: val.option_value_name,
+      name_sc: val.option_value_name, // Fallback to TC
     })),
   }));
 
   const variants: ProductVariant[] = externalGood.goods_sku
-    .filter(sku => sku.is_enabled) // Only include enabled SKUs
+    .filter(sku => sku.is_enabled) 
     .map(sku => {
       const optionValueIds = sku.sku_option_mappings.map(m => m.option_value_id);
       
-      // Derive variant name
-      const variantOptionNames: string[] = [];
+      const variantOptionNamesEn: string[] = [];
+      const variantOptionNamesTc: string[] = [];
+
       sku.sku_option_mappings.forEach(mapping => {
         const group = externalGood.options.find(g => g.option_id === mapping.option_id);
         if (group) {
           const value = group.option_values.find(v => v.option_value_id === mapping.option_value_id);
           if (value) {
-            variantOptionNames.push(value.option_value_name);
+            variantOptionNamesEn.push(translate(value.option_value_name, 'en'));
+            variantOptionNamesTc.push(value.option_value_name);
           }
         }
       });
-      const derivedVariantName = variantOptionNames.join(' - ') || `Variant ${sku.sku_id}`;
+      const derivedVariantNameEn = variantOptionNamesEn.join(' - ') || `Variant ${sku.sku_id}`;
+      const derivedVariantNameTc = variantOptionNamesTc.join(' - ') || `變體 ${sku.sku_id}`; // Generic TC fallback
+      const derivedVariantNameSc = derivedVariantNameTc; // Generic SC fallback (could be same as TC or translated)
+
 
       return {
         id: sku.sku_id,
-        sku: `SKU-${sku.sku_id}`, // External API doesn't provide a string SKU like the mock
-        ...optionNameLangFallback(derivedVariantName),
+        sku: `SKU-${sku.sku_id}`, 
+        name_en: derivedVariantNameEn,
+        name_tc: derivedVariantNameTc,
+        name_sc: derivedVariantNameSc,
         option_value_ids: optionValueIds,
-        stock: sku.inventory, // Use inventory, or remaining_inventory if more appropriate
-        price: sku.price.toFixed(2), // External API price is number, internal type is string
+        stock: sku.inventory, 
+        price: sku.price.toFixed(2), 
         image: sku.images?.[0]?.url || sku.sku_images?.[0]?.url || externalGood.goods_images?.[0]?.url || null,
       };
     });
 
   return {
     id: externalGood.goods_id,
-    ...optionNameLangFallback(externalGood.goods_name), // Using goods_name for all languages for now
-    name_en: externalGood.goods_name, // Prioritize provided name for en, can be adjusted
+    name_en,
+    name_tc,
+    name_sc,
     goods_images: externalGood.goods_images.map(img => img.url),
     option_groups: optionGroups,
     variants: variants,
     max_quantity_per_order: externalGood.max_per_user,
-    min_quantity_per_order: 1, // Defaulting to 1 as it's not in the new API structure directly
-    description_tc: externalGood.description,
-    description_en: externalGood.description, // Using main description for all languages
-    description_sc: externalGood.description,
+    min_quantity_per_order: 1, 
+    description_en,
+    description_tc,
+    description_sc,
   };
 }
 
@@ -187,7 +229,6 @@ export async function GET() {
     });
 
     if (!response.ok) {
-      // Non-2xx response from external API
       const errorText = await response.text().catch(() => "Could not retrieve error text from external API");
       console.error(`External API HTTP Error (${response.status}): ${errorText}. Falling back to mock data.`);
       return NextResponse.json(mockApiResponse);
@@ -200,18 +241,16 @@ export async function GET() {
       return NextResponse.json(mockApiResponse);
     }
     
-    // Transform the external API data to our internal ProductData structure
     const transformedData = transformExternalGoodToProductData(externalApiResponse.good);
     
     return NextResponse.json({
       code: 0,
-      msg: "Success (Live Data)",
+      msg: "Success (Live Data Transformed)",
       data: transformedData,
     });
 
   } catch (error) {
     console.error('Network or other error fetching or transforming product data:', error);
-    // const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
     console.error('Falling back to mock data due to error.');
     return NextResponse.json(mockApiResponse);
   }
