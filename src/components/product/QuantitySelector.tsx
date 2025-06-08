@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -38,6 +39,7 @@ export default function QuantitySelector({ quantity, setQuantity, min, max, disa
       <Label htmlFor="quantity" className="text-sm font-medium text-foreground/80">Quantity</Label>
       <div className="flex items-center gap-2">
         <Button
+          type="button"
           variant="outline"
           size="icon"
           onClick={handleDecrement}
@@ -64,6 +66,7 @@ export default function QuantitySelector({ quantity, setQuantity, min, max, disa
           aria-live="polite"
         />
         <Button
+          type="button"
           variant="outline"
           size="icon"
           onClick={handleIncrement}

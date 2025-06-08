@@ -1,3 +1,4 @@
+
 import type { ProductOptionGroup, ProductOption } from '@/types/product';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -21,6 +22,7 @@ export default function OptionGroupSelector({ group, selectedValue, onSelectOpti
           return (
             <Button
               key={option.id}
+              type="button"
               variant={state === 'selected' ? 'default' : state === 'available' ? 'outline' : 'secondary'}
               size="sm"
               onClick={() => onSelectOption(group.id, option.id)}
