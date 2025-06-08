@@ -63,15 +63,40 @@ interface ExternalApiResponse {
 
 const PRODUCT_API_URL = 'https://orderhkuat.pokeguide.com/api/v1/goods/2';
 
+// Translation map for Chinese to English
+const translations: Record<string, string> = {
+  "口罩套": "Mask Cover",
+  "我是口罩套": "I am a Mask Cover",
+  "大小": "Size",
+  "大": "Large",
+  "小": "Small",
+  "顏色": "Color",
+  "颜色": "Color",
+  "黑": "Black",
+  "黃": "Yellow",
+  "黄": "Yellow",
+  "白": "White",
+  "產地": "Origin",
+  "产地": "Origin",
+  "香港": "Hong Kong",
+  "越南": "Vietnam",
+  "台灣": "Taiwan",
+  "台湾": "Taiwan",
+};
+
+function translate(text: string): string {
+  return translations[text] || text;
+}
+
 function transformExternalGoodToProductData(externalGood: ExternalApiGoodData): ProductData {
   const optionGroups: ProductOptionGroup[] = externalGood.options.map(opt => ({
     id: opt.option_id,
-    name_en: opt.option_name,
+    name_en: translate(opt.option_name),
     name_tc: opt.option_name,
     name_sc: opt.option_name,
     options: opt.option_values.map(val => ({
       id: val.option_value_id,
-      name_en: val.option_value_name,
+      name_en: translate(val.option_value_name),
       name_tc: val.option_value_name,
       name_sc: val.option_value_name,
     })),
@@ -82,25 +107,28 @@ function transformExternalGoodToProductData(externalGood: ExternalApiGoodData): 
     .map(sku => {
       const optionValueIds = sku.sku_option_mappings.map(m => m.option_value_id);
       
-      const variantOptionNames: string[] = [];
+      const variantOptionNamesEn: string[] = [];
+      const variantOptionNamesTc: string[] = [];
 
       sku.sku_option_mappings.forEach(mapping => {
         const group = externalGood.options.find(g => g.option_id === mapping.option_id);
         if (group) {
           const value = group.option_values.find(v => v.option_value_id === mapping.option_value_id);
           if (value) {
-            variantOptionNames.push(value.option_value_name);
+            variantOptionNamesEn.push(translate(value.option_value_name));
+            variantOptionNamesTc.push(value.option_value_name);
           }
         }
       });
-      const derivedVariantName = variantOptionNames.join(' - ') || `Variant ${sku.sku_id}`;
+      const derivedVariantNameEn = variantOptionNamesEn.join(' - ') || `Variant ${sku.sku_id}`;
+      const derivedVariantNameTc = variantOptionNamesTc.join(' - ') || `變體 ${sku.sku_id}`;
 
       return {
         id: sku.sku_id,
         sku: `SKU-${sku.sku_id}`,
-        name_en: derivedVariantName,
-        name_tc: derivedVariantName,
-        name_sc: derivedVariantName,
+        name_en: derivedVariantNameEn,
+        name_tc: derivedVariantNameTc,
+        name_sc: derivedVariantNameTc,
         option_value_ids: optionValueIds,
         stock: sku.inventory,
         price: sku.price.toFixed(2),
@@ -110,7 +138,7 @@ function transformExternalGoodToProductData(externalGood: ExternalApiGoodData): 
 
   return {
     id: externalGood.goods_id,
-    name_en: externalGood.goods_name,
+    name_en: translate(externalGood.goods_name),
     name_tc: externalGood.goods_name,
     name_sc: externalGood.goods_name,
     goods_images: externalGood.goods_images.map(img => img.url),
@@ -118,7 +146,7 @@ function transformExternalGoodToProductData(externalGood: ExternalApiGoodData): 
     variants: variants,
     max_quantity_per_order: externalGood.max_per_user,
     min_quantity_per_order: 1,
-    description_en: externalGood.description,
+    description_en: translate(externalGood.description),
     description_tc: externalGood.description,
     description_sc: externalGood.description,
   };
