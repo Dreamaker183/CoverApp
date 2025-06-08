@@ -40,7 +40,7 @@ interface ExternalApiGoodsSku {
   unit_id: number | null;
   remaining_inventory: number;
   description: string;
-  sku_images: ExternalApiImage[]; 
+  sku_images: ExternalApiImage[];
   images: ExternalApiImage[];
   is_enabled: boolean;
   sku_option_mappings: ExternalApiSkuOptionMapping[];
@@ -120,37 +120,38 @@ const mockApiResponse: ProductApiResponse = {
   data: mockProductData,
 };
 
-// Basic translation map based on provided API response
+// Basic translation map
 const translations: Record<string, string> = {
   "口罩套": "Mask Cover",
   "我是口罩套": "I am a Mask Cover",
   "大小": "Size",
   "大": "Large",
   "小": "Small",
-  "顏色": "Color", //  "颜色" (Simplified) also maps to Color
+  "顏色": "Color",
+  "颜色": "Color",
   "黑": "Black",
-  "黃": "Yellow", // "黄" (Simplified) also maps to Yellow
+  "黃": "Yellow",
+  "黄": "Yellow",
   "白": "White",
-  "產地": "Origin", // "产地" (Simplified) also maps to Origin
+  "產地": "Origin",
+  "产地": "Origin",
   "香港": "Hong Kong",
   "越南": "Vietnam",
-  "台灣": "Taiwan", // "台湾" (Simplified) also maps to Taiwan
-  // Add other common terms if needed
+  "台灣": "Taiwan",
+  "台湾": "Taiwan",
 };
 
 const translate = (text: string, lang: 'en' | 'tc' | 'sc' = 'en'): string => {
   if (lang === 'en') {
-    return translations[text] || text; // Default to original text if no EN translation
+    return translations[text] || text;
   }
-  // For TC/SC, API provides Chinese, so just return original or potentially map simplified to traditional if needed.
-  // For simplicity, we'll return the original text for tc/sc.
-  return text; 
+  return text;
 };
 
 function transformExternalGoodToProductData(externalGood: ExternalApiGoodData): ProductData {
   const name_en = translate(externalGood.goods_name, 'en');
-  const name_tc = externalGood.goods_name; 
-  const name_sc = externalGood.goods_name; // Assuming API provides traditional, or use a lib for S->T if necessary
+  const name_tc = externalGood.goods_name;
+  const name_sc = externalGood.goods_name;
 
   const description_en = externalGood.description ? translate(externalGood.description, 'en') : undefined;
   const description_tc = externalGood.description;
@@ -160,17 +161,17 @@ function transformExternalGoodToProductData(externalGood: ExternalApiGoodData): 
     id: opt.option_id,
     name_en: translate(opt.option_name, 'en'),
     name_tc: opt.option_name,
-    name_sc: opt.option_name, // Fallback to TC
+    name_sc: opt.option_name,
     options: opt.option_values.map(val => ({
       id: val.option_value_id,
       name_en: translate(val.option_value_name, 'en'),
       name_tc: val.option_value_name,
-      name_sc: val.option_value_name, // Fallback to TC
+      name_sc: val.option_value_name,
     })),
   }));
 
   const variants: ProductVariant[] = externalGood.goods_sku
-    .filter(sku => sku.is_enabled) 
+    .filter(sku => sku.is_enabled)
     .map(sku => {
       const optionValueIds = sku.sku_option_mappings.map(m => m.option_value_id);
       
@@ -188,19 +189,19 @@ function transformExternalGoodToProductData(externalGood: ExternalApiGoodData): 
         }
       });
       const derivedVariantNameEn = variantOptionNamesEn.join(' - ') || `Variant ${sku.sku_id}`;
-      const derivedVariantNameTc = variantOptionNamesTc.join(' - ') || `變體 ${sku.sku_id}`; // Generic TC fallback
-      const derivedVariantNameSc = derivedVariantNameTc; // Generic SC fallback (could be same as TC or translated)
+      const derivedVariantNameTc = variantOptionNamesTc.join(' - ') || `變體 ${sku.sku_id}`;
+      const derivedVariantNameSc = derivedVariantNameTc;
 
 
       return {
         id: sku.sku_id,
-        sku: `SKU-${sku.sku_id}`, 
+        sku: `SKU-${sku.sku_id}`,
         name_en: derivedVariantNameEn,
         name_tc: derivedVariantNameTc,
         name_sc: derivedVariantNameSc,
         option_value_ids: optionValueIds,
-        stock: sku.inventory, 
-        price: sku.price.toFixed(2), 
+        stock: sku.inventory,
+        price: sku.price.toFixed(2),
         image: sku.images?.[0]?.url || sku.sku_images?.[0]?.url || externalGood.goods_images?.[0]?.url || null,
       };
     });
@@ -214,7 +215,7 @@ function transformExternalGoodToProductData(externalGood: ExternalApiGoodData): 
     option_groups: optionGroups,
     variants: variants,
     max_quantity_per_order: externalGood.max_per_user,
-    min_quantity_per_order: 1, 
+    min_quantity_per_order: 1,
     description_en,
     description_tc,
     description_sc,
@@ -224,7 +225,7 @@ function transformExternalGoodToProductData(externalGood: ExternalApiGoodData): 
 export async function GET() {
   try {
     const response = await fetch(PRODUCT_API_URL, {
-      cache: 'no-store', 
+      cache: 'no-store',
       headers: { 'Accept': 'application/json' }
     });
 

@@ -39,18 +39,16 @@ export function useProductViewModel(): UseProductViewModelReturn {
         const productResponse = await fetchProduct();
         if (productResponse.data) {
           setProduct(productResponse.data);
-          // Initialize selectedOptions with the first available option for each group
           const initialSelectedOptions: SelectedOptions = {};
           if (productResponse.data.option_groups) {
             productResponse.data.option_groups.forEach(group => {
               if (group.options && group.options.length > 0) {
-                 // Try to find a default selection that forms a valid variant
                 let foundInitialOption = false;
                 for (const opt of group.options) {
                   const tempSelection = { ...initialSelectedOptions, [group.id]: opt.id };
                   if (productResponse.data.variants.some(v => 
                       v.option_value_ids.includes(opt.id) &&
-                      Object.values(tempSelection).every(val => val === null || v.option_value_ids.includes(val))
+                      Object.values(tempSelection).every(val => val === null || v.option_value_ids.includes(val as number))
                   )) {
                     initialSelectedOptions[group.id] = opt.id;
                     foundInitialOption = true;
@@ -58,9 +56,8 @@ export function useProductViewModel(): UseProductViewModelReturn {
                   }
                 }
                 if (!foundInitialOption) {
-                    initialSelectedOptions[group.id] = null; // Or group.options[0].id if forcing a selection
+                    initialSelectedOptions[group.id] = null; 
                 }
-
               } else {
                 initialSelectedOptions[group.id] = null;
               }
@@ -73,6 +70,7 @@ export function useProductViewModel(): UseProductViewModelReturn {
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An unknown error occurred while fetching product data.');
+        setProduct(null);
       } finally {
         setIsLoading(false);
       }
@@ -85,7 +83,7 @@ export function useProductViewModel(): UseProductViewModelReturn {
       return null;
     }
     const selectedIds = Object.values(currentSelectedOptions).filter(id => id !== null) as number[];
-    if (selectedIds.length !== product.option_groups.length) return null; // All groups must have a selection
+    if (selectedIds.length !== product.option_groups.length) return null;
 
     return product.variants.find(variant =>
       selectedIds.every(id => variant.option_value_ids.includes(id)) &&
@@ -108,7 +106,6 @@ export function useProductViewModel(): UseProductViewModelReturn {
   const handleSelectOption = useCallback((optionGroupId: number, optionId: number) => {
     setSelectedOptions(prev => {
       const newSelectedOptions = { ...prev, [optionGroupId]: optionId };
-      // Potentially reset dependent options if this logic is desired, or smart-select next available
       return newSelectedOptions;
     });
   }, []);
@@ -125,9 +122,9 @@ export function useProductViewModel(): UseProductViewModelReturn {
   }, [currentVariant, product]);
 
   const isSoldOut = useMemo(() => {
-    if (!product) return true; // No product data
-    if (Object.values(selectedOptions).some(val => val === null)) return false; // Not all options selected, so not "sold out" yet
-    return currentVariant ? currentVariant.stock === 0 : true; // True if variant resolved and stock is 0, or if no variant for selection
+    if (!product) return true;
+    if (Object.values(selectedOptions).some(val => val === null)) return false;
+    return currentVariant ? currentVariant.stock === 0 : true;
   }, [product, selectedOptions, currentVariant]);
   
   const totalStockForSelectedOptions = useMemo(() => {
@@ -141,24 +138,17 @@ export function useProductViewModel(): UseProductViewModelReturn {
       return 'selected';
     }
 
-    // Check if selecting this option (along with other *currently selected* options) would form any valid variant with stock
     const tempSelectedOptions = { ...selectedOptions, [optionGroupId]: optionId };
     
-    // Create a list of option IDs that must be present, based on current selections and this test option
-    const requiredOptionIds = product.option_groups
-      .map(group => tempSelectedOptions[group.id])
-      .filter(id => id !== null) as number[];
-      
     const isPotentiallyAvailable = product.variants.some(variant => {
-        // Does this variant contain the option we are testing?
         if (!variant.option_value_ids.includes(optionId)) return false;
 
-        // For other groups, does this variant match what's already selected?
-        for (const groupId in tempSelectedOptions) {
-            if (Number(groupId) === optionGroupId) continue; // Skip the group we are testing
-            const selectedOptionInOtherGroup = tempSelectedOptions[groupId];
+        for (const grpIdStr in tempSelectedOptions) {
+            const grpId = Number(grpIdStr);
+            if (grpId === optionGroupId) continue; 
+            const selectedOptionInOtherGroup = tempSelectedOptions[grpId];
             if (selectedOptionInOtherGroup !== null && !variant.option_value_ids.includes(selectedOptionInOtherGroup)) {
-                return false; // This variant doesn't match selection in another group
+                return false;
             }
         }
         return variant.stock > 0;
