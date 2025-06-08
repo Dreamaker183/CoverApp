@@ -19,8 +19,9 @@ export default function ProductImageDisplay({ imageUrl, productName }: ProductIm
           <Image
             src={imageToDisplay}
             alt={imageUrl ? `Image for ${productName}` : "Placeholder image"}
-            layout="fill"
-            objectFit="cover"
+            fill={true}
+            className="object-cover"
+            priority={true}
             data-ai-hint={hint}
           />
         </div>
