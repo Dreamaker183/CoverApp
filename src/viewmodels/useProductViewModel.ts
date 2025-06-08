@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -37,37 +36,42 @@ export function useProductViewModel(): UseProductViewModelReturn {
         setIsLoading(true);
         setError(null);
         const productResponse = await fetchProduct();
-        if (productResponse.data) {
-          setProduct(productResponse.data);
-          const initialSelectedOptions: SelectedOptions = {};
-          if (productResponse.data.option_groups) {
-            productResponse.data.option_groups.forEach(group => {
-              if (group.options && group.options.length > 0) {
-                let foundInitialOption = false;
-                for (const opt of group.options) {
-                  const tempSelection = { ...initialSelectedOptions, [group.id]: opt.id };
-                  if (productResponse.data.variants.some(v => 
-                      v.option_value_ids.includes(opt.id) &&
-                      Object.values(tempSelection).every(val => val === null || v.option_value_ids.includes(val as number))
-                  )) {
-                    initialSelectedOptions[group.id] = opt.id;
-                    foundInitialOption = true;
-                    break;
-                  }
+        
+        if (!productResponse.data) {
+          setError(productResponse.msg || 'No product data found.');
+          setProduct(null);
+          return;
+        }
+
+        const productData = productResponse.data;
+        setProduct(productData);
+        
+        const initialSelectedOptions: SelectedOptions = {};
+        if (productData.option_groups) {
+          productData.option_groups.forEach(group => {
+            if (group.options && group.options.length > 0) {
+              let foundInitialOption = false;
+              for (const opt of group.options) {
+                const tempSelection = { ...initialSelectedOptions, [group.id]: opt.id };
+                if (productData.variants.some((v: ProductVariant) => 
+                    v.option_value_ids.includes(opt.id) &&
+                    Object.values(tempSelection).every(val => val === null || v.option_value_ids.includes(val as number))
+                )) {
+                  initialSelectedOptions[group.id] = opt.id;
+                  foundInitialOption = true;
+                  break;
                 }
-                if (!foundInitialOption) {
-                    initialSelectedOptions[group.id] = null; 
-                }
-              } else {
+              }
+              if (!foundInitialOption) {
                 initialSelectedOptions[group.id] = null;
               }
-            });
-          }
-          setSelectedOptions(initialSelectedOptions);
-          setQuantity(productResponse.data.min_quantity_per_order || 1);
-        } else {
-          setError(productResponse.msg || 'No product data found.');
+            } else {
+              initialSelectedOptions[group.id] = null;
+            }
+          });
         }
+        setSelectedOptions(initialSelectedOptions);
+        setQuantity(productData.min_quantity_per_order || 1);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An unknown error occurred while fetching product data.');
         setProduct(null);
@@ -96,7 +100,7 @@ export function useProductViewModel(): UseProductViewModelReturn {
       const variant = findVariant(selectedOptions);
       setCurrentVariant(variant);
       if (variant) {
-        setQuantity(prevQuantity => Math.max(product.min_quantity_per_order, Math.min(prevQuantity, variant.stock, product.max_quantity_per_order)));
+        setQuantity((prevQuantity: number) => Math.max(product.min_quantity_per_order, Math.min(prevQuantity, variant.stock, product.max_quantity_per_order)));
       } else {
          setQuantity(product.min_quantity_per_order);
       }
@@ -104,7 +108,7 @@ export function useProductViewModel(): UseProductViewModelReturn {
   }, [product, selectedOptions, findVariant]);
 
   const handleSelectOption = useCallback((optionGroupId: number, optionId: number) => {
-    setSelectedOptions(prev => {
+    setSelectedOptions((prev: SelectedOptions) => {
       const newSelectedOptions = { ...prev, [optionGroupId]: optionId };
       return newSelectedOptions;
     });
@@ -140,7 +144,7 @@ export function useProductViewModel(): UseProductViewModelReturn {
 
     const tempSelectedOptions = { ...selectedOptions, [optionGroupId]: optionId };
     
-    const isPotentiallyAvailable = product.variants.some(variant => {
+    const isPotentiallyAvailable = product.variants.some((variant: ProductVariant) => {
         if (!variant.option_value_ids.includes(optionId)) return false;
 
         for (const grpIdStr in tempSelectedOptions) {
@@ -169,7 +173,6 @@ export function useProductViewModel(): UseProductViewModelReturn {
   const effectiveMinQuantity = useMemo(() => {
     return product?.min_quantity_per_order ?? 1;
   }, [product]);
-
 
   return {
     product,
