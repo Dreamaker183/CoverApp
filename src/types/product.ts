@@ -1,4 +1,3 @@
-
 export interface ProductOption {
   id: number;
   name_tc: string;
@@ -47,4 +46,4 @@ export interface ProductApiResponse {
   data: ProductData | null;
 }
 
-export type SelectedOptions = Record<string, number | null>; // option_group_id -> option_id
+export type SelectedOptions = { [key: number]: number | null };

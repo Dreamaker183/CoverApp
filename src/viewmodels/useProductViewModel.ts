@@ -142,15 +142,15 @@ export function useProductViewModel(): UseProductViewModelReturn {
       return 'selected';
     }
 
-    const tempSelectedOptions = { ...selectedOptions, [optionGroupId]: optionId };
+    const tempSelectedOptions: SelectedOptions = { ...selectedOptions, [optionGroupId]: optionId };
     
     const isPotentiallyAvailable = product.variants.some((variant: ProductVariant) => {
         if (!variant.option_value_ids.includes(optionId)) return false;
 
-        for (const grpIdStr in tempSelectedOptions) {
-            const grpId = Number(grpIdStr);
-            if (grpId === optionGroupId) continue; 
-            const selectedOptionInOtherGroup = tempSelectedOptions[grpId];
+        for (const grpId in tempSelectedOptions) {
+            const grpIdNum = Number(grpId);
+            if (grpIdNum === optionGroupId) continue; 
+            const selectedOptionInOtherGroup = tempSelectedOptions[grpIdNum];
             if (selectedOptionInOtherGroup !== null && !variant.option_value_ids.includes(selectedOptionInOtherGroup)) {
                 return false;
             }
