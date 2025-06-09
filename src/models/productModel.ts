@@ -3,6 +3,10 @@ import type { ProductApiResponse } from '@/types/product';
 export async function fetchProduct(): Promise<ProductApiResponse> {
   const response = await fetch('/api/product', {
     cache: 'no-store',
+    headers: {
+      'Cache-Control': 'no-cache',
+      'Pragma': 'no-cache'
+    }
   });
   
   if (!response.ok) {

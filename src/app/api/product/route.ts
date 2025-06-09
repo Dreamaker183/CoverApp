@@ -156,7 +156,11 @@ export async function GET() {
   try {
     const response = await fetch(PRODUCT_API_URL, {
       cache: 'no-store',
-      headers: { 'Accept': 'application/json' }
+      headers: { 
+        'Accept': 'application/json',
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache'
+      }
     });
 
     if (!response.ok) {

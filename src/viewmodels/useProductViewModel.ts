@@ -155,10 +155,11 @@ export function useProductViewModel(): UseProductViewModelReturn {
                 return false;
             }
         }
-        return variant.stock > 0 && variant.stock >= product.min_quantity_per_order;
+        return variant.stock > 0;
     });
 
     return isPotentiallyAvailable ? 'available' : 'disabled';
+
   }, [product, selectedOptions]);
 
   const effectiveMaxQuantity = useMemo(() => {
