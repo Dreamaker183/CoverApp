@@ -62,6 +62,7 @@ interface ExternalApiResponse {
 }
 
 const PRODUCT_API_URL = 'https://orderhkuat.pokeguide.com/api/v1/goods/2';
+const FALLBACK_API_URL = 'https://orderhk.pokeguide.com/api/v1/goods/2';
 
 // Translation map for Chinese to English
 const translations: Record<string, string> = {
@@ -153,22 +154,29 @@ function transformExternalGoodToProductData(externalGood: ExternalApiGoodData): 
 }
 
 async function fetchWithRetry(url: string, retries = 3): Promise<Response> {
+  let lastError: Error | null = null;
+  
   for (let i = 0; i < retries; i++) {
     try {
+      console.log(`Attempt ${i + 1} to fetch from:`, url);
+      
       const response = await fetch(url, {
         cache: 'no-store',
         headers: { 
           'Accept': 'application/json',
           'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
+          'Pragma': 'no-cache',
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
       });
       
       if (response.ok) {
+        console.log(`Success on attempt ${i + 1}`);
         return response;
       }
       
       console.error(`Attempt ${i + 1} failed with status:`, response.status);
+      lastError = new Error(`HTTP Error: ${response.status}`);
       
       if (i === retries - 1) {
         return response;
@@ -178,9 +186,10 @@ async function fetchWithRetry(url: string, retries = 3): Promise<Response> {
       await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
     } catch (error) {
       console.error(`Attempt ${i + 1} failed with error:`, error);
+      lastError = error instanceof Error ? error : new Error('Unknown error occurred');
       
       if (i === retries - 1) {
-        throw error;
+        throw lastError;
       }
       
       // Wait before retrying (exponential backoff)
@@ -188,30 +197,40 @@ async function fetchWithRetry(url: string, retries = 3): Promise<Response> {
     }
   }
   
-  throw new Error('All retry attempts failed');
+  throw lastError || new Error('All retry attempts failed');
 }
 
 export async function GET() {
   try {
-    console.log('Fetching product data from:', PRODUCT_API_URL);
+    console.log('Starting product data fetch...');
     
-    const response = await fetchWithRetry(PRODUCT_API_URL);
+    // Try primary URL first
+    let response = await fetchWithRetry(PRODUCT_API_URL).catch(error => {
+      console.error('Primary URL failed:', error);
+      return null;
+    });
+    
+    // If primary URL fails, try fallback URL
+    if (!response || !response.ok) {
+      console.log('Trying fallback URL...');
+      response = await fetchWithRetry(FALLBACK_API_URL);
+    }
 
     if (!response.ok) {
-      console.error('External API error:', response.status, response.statusText);
-      throw new Error(`External API HTTP Error (${response.status}): ${response.statusText}`);
+      console.error('Both URLs failed. Last error:', response.status, response.statusText);
+      throw new Error(`API HTTP Error (${response.status}): ${response.statusText}`);
     }
 
     const externalApiResponse: ExternalApiResponse = await response.json();
-    console.log('External API response status:', externalApiResponse.status);
+    console.log('API response status:', externalApiResponse.status);
 
     if (externalApiResponse.status !== "OK" || !externalApiResponse.good) {
       console.error('Invalid API response:', externalApiResponse);
-      throw new Error(`External API returned status '${externalApiResponse.status}' or no 'good' data`);
+      throw new Error(`API returned status '${externalApiResponse.status}' or no 'good' data`);
     }
     
     const transformedData = transformExternalGoodToProductData(externalApiResponse.good);
-    console.log('Transformed data:', transformedData);
+    console.log('Data transformation successful');
     
     return NextResponse.json({
       code: 0,
