@@ -130,7 +130,7 @@ function transformExternalGoodToProductData(externalGood: ExternalApiGoodData): 
         name_tc: derivedVariantNameTc,
         name_sc: derivedVariantNameTc,
         option_value_ids: optionValueIds,
-        stock: sku.inventory,
+        stock: sku.remaining_inventory,
         price: sku.price.toFixed(2),
         image: sku.images?.[0]?.url || sku.sku_images?.[0]?.url || externalGood.goods_images?.[0]?.url || null,
       };
