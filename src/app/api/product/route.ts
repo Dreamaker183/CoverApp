@@ -154,6 +154,8 @@ function transformExternalGoodToProductData(externalGood: ExternalApiGoodData): 
 
 export async function GET() {
   try {
+    console.log('Fetching product data from:', PRODUCT_API_URL);
+    
     const response = await fetch(PRODUCT_API_URL, {
       cache: 'no-store',
       headers: { 
@@ -164,29 +166,44 @@ export async function GET() {
     });
 
     if (!response.ok) {
-      throw new Error(`External API HTTP Error (${response.status})`);
+      console.error('External API error:', response.status, response.statusText);
+      throw new Error(`External API HTTP Error (${response.status}): ${response.statusText}`);
     }
 
     const externalApiResponse: ExternalApiResponse = await response.json();
+    console.log('External API response status:', externalApiResponse.status);
 
     if (externalApiResponse.status !== "OK" || !externalApiResponse.good) {
+      console.error('Invalid API response:', externalApiResponse);
       throw new Error(`External API returned status '${externalApiResponse.status}' or no 'good' data`);
     }
     
     const transformedData = transformExternalGoodToProductData(externalApiResponse.good);
+    console.log('Transformed data:', transformedData);
     
     return NextResponse.json({
       code: 0,
       msg: "Success",
       data: transformedData,
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, must-revalidate',
+        'Pragma': 'no-cache'
+      }
     });
 
   } catch (error) {
-    console.error('Error fetching or transforming product data:', error);
+    console.error('Error in product API route:', error);
     return NextResponse.json({
       code: 1,
       msg: error instanceof Error ? error.message : 'Unknown error occurred',
       data: null
-    }, { status: 500 });
+    }, { 
+      status: 500,
+      headers: {
+        'Cache-Control': 'no-store, must-revalidate',
+        'Pragma': 'no-cache'
+      }
+    });
   }
 }
