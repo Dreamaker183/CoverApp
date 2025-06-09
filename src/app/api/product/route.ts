@@ -152,18 +152,50 @@ function transformExternalGoodToProductData(externalGood: ExternalApiGoodData): 
   };
 }
 
+async function fetchWithRetry(url: string, retries = 3): Promise<Response> {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const response = await fetch(url, {
+        cache: 'no-store',
+        headers: { 
+          'Accept': 'application/json',
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+      
+      if (response.ok) {
+        return response;
+      }
+      
+      console.error(`Attempt ${i + 1} failed with status:`, response.status);
+      
+      if (i === retries - 1) {
+        return response;
+      }
+      
+      // Wait before retrying (exponential backoff)
+      await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+    } catch (error) {
+      console.error(`Attempt ${i + 1} failed with error:`, error);
+      
+      if (i === retries - 1) {
+        throw error;
+      }
+      
+      // Wait before retrying (exponential backoff)
+      await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+    }
+  }
+  
+  throw new Error('All retry attempts failed');
+}
+
 export async function GET() {
   try {
     console.log('Fetching product data from:', PRODUCT_API_URL);
     
-    const response = await fetch(PRODUCT_API_URL, {
-      cache: 'no-store',
-      headers: { 
-        'Accept': 'application/json',
-        'Cache-Control': 'no-cache',
-        'Pragma': 'no-cache'
-      }
-    });
+    const response = await fetchWithRetry(PRODUCT_API_URL);
 
     if (!response.ok) {
       console.error('External API error:', response.status, response.statusText);
