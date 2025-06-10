@@ -104,7 +104,7 @@ function transformExternalGoodToProductData(externalGood: ExternalApiGoodData): 
   }));
 
   const variants: ProductVariant[] = externalGood.goods_sku
-    .filter(sku => sku.is_enabled)
+    .filter(sku => sku.is_enabled !== false)
     .map(sku => {
       const optionValueIds = sku.sku_option_mappings.map(m => m.option_value_id);
       
@@ -133,7 +133,7 @@ function transformExternalGoodToProductData(externalGood: ExternalApiGoodData): 
         option_value_ids: optionValueIds,
         stock: sku.remaining_inventory,
         price: sku.price.toFixed(2),
-        image: sku.images?.[0]?.url || sku.sku_images?.[0]?.url || externalGood.goods_images?.[0]?.url || null,
+        image: sku.images?.[0]?.url || externalGood.goods_images?.[0]?.url || null,
       };
     });
 
@@ -163,7 +163,7 @@ async function fetchWithRetry(url: string, retries = 3): Promise<Response> {
       const response = await fetch(url, {
         cache: 'no-store',
         headers: { 
-          'Accept': '/Users/ansonchan/Downloads/CoverApp-main/src/app/api/product/mask',
+          'Accept': 'application/json',
           'Cache-Control': 'no-cache',
           'Pragma': 'no-cache',
           'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
