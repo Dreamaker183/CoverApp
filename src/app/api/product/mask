@@ -1,0 +1,523 @@
+{
+  "status": "OK",
+  "good": {
+    "goods_id": 2,
+    "max_per_user": 10,
+    "goods_name": "mask cover",
+    "description": "I am mask cover",
+    "is_enabled": true,
+    "categories": [
+      
+    ],
+    "goods_images": [
+      {
+        "image_id": 8,
+        "url": "https://maskuat.pokeguide.com/img/1_01_500.jpg"
+      }
+    ],
+    "thumbnail": "",
+    "merchant": {
+      "merchant_id": 2,
+      "merchant_name": "Pokeguide"
+    },
+    "ratings": 0,
+    "options": [
+      {
+        "option_id": 2,
+        "option_name": "size",
+        "can_change_after_payment": false,
+        "option_values": [
+          {
+            "option_value_id": 2,
+            "weight": 1,
+            "option_value_name": "large",
+            "images": [
+              
+            ]
+          },
+          {
+            "option_value_id": 3,
+            "weight": 1,
+            "option_value_name": "small",
+            "images": [
+              
+            ]
+          }
+        ]
+      },
+      {
+        "option_id": 3,
+        "option_name": "color",
+        "can_change_after_payment": false,
+        "option_values": [
+          {
+            "option_value_id": 4,
+            "weight": 1,
+            "option_value_name": "black black black black",
+            "images": [
+              
+            ]
+          },
+          {
+            "option_value_id": 5,
+            "weight": 1,
+            "option_value_name": "yellow yellow yellow yellow",
+            "images": [
+              
+            ]
+          },
+          {
+            "option_value_id": 6,
+            "weight": 1,
+            "option_value_name": "white white white white",
+            "images": [
+              
+            ]
+          }
+        ]
+      },
+      {
+        "option_id": 4,
+        "option_name": "origin",
+        "can_change_after_payment": false,
+        "option_values": [
+          {
+            "option_value_id": 7,
+            "weight": 1,
+            "option_value_name": "HK",
+            "images": [
+              
+            ]
+          },
+          {
+            "option_value_id": 8,
+            "weight": 1,
+            "option_value_name": "Vietnam",
+            "images": [
+              
+            ]
+          },
+          {
+            "option_value_id": 9,
+            "weight": 1,
+            "option_value_name": "Taiwan",
+            "images": [
+              
+            ]
+          }
+        ]
+      }
+    ],
+    "attributes": [
+      
+    ],
+    "goods_sku": [
+      {
+        "price": 34,
+        "discounted_price": 34,
+        "max_inventory": 1000,
+        "inventory": 0,
+        "images": [
+          {
+            "image_id": 10,
+            "url": "https://maskuat.pokeguide.com/img/1_01_500.jpg"
+          }
+        ],
+        "sku_option_mappings": [
+          {
+            "option_id": 2,
+            "option_value_id": 2
+          },
+          {
+            "option_id": 3,
+            "option_value_id": 4
+          },
+          {
+            "option_id": 4,
+            "option_value_id": 8
+          }
+        ],
+        "sku_id": 3,
+        "remaining_quantity": 0
+      },
+      {
+        "price": 40,
+        "discounted_price": 40,
+        "max_inventory": 1000,
+        "inventory": 999,
+        "images": [
+          {
+            "image_id": 12,
+            "url": "https://maskuat.pokeguide.com/img/1_01_500.jpg"
+          }
+        ],
+        "sku_option_mappings": [
+          {
+            "option_id": 2,
+            "option_value_id": 2
+          },
+          {
+            "option_id": 3,
+            "option_value_id": 5
+          },
+          {
+            "option_id": 4,
+            "option_value_id": 7
+          }
+        ],
+        "sku_id": 5,
+        "remaining_quantity": 999
+      },
+      {
+        "price": 32,
+        "discounted_price": 32,
+        "max_inventory": 1000,
+        "inventory": 995,
+        "images": [
+          {
+            "image_id": 13,
+            "url": "https://maskuat.pokeguide.com/img/1_01_500.jpg"
+          }
+        ],
+        "sku_option_mappings": [
+          {
+            "option_id": 2,
+            "option_value_id": 2
+          },
+          {
+            "option_id": 3,
+            "option_value_id": 5
+          },
+          {
+            "option_id": 4,
+            "option_value_id": 8
+          }
+        ],
+        "sku_id": 6,
+        "remaining_quantity": 995
+      },
+      {
+        "price": 28,
+        "discounted_price": 28,
+        "max_inventory": 1000,
+        "inventory": 1000,
+        "images": [
+          {
+            "image_id": 14,
+            "url": "https://maskuat.pokeguide.com/img/1_01_500.jpg"
+          }
+        ],
+        "sku_option_mappings": [
+          {
+            "option_id": 2,
+            "option_value_id": 2
+          },
+          {
+            "option_id": 3,
+            "option_value_id": 5
+          },
+          {
+            "option_id": 4,
+            "option_value_id": 9
+          }
+        ],
+        "sku_id": 7,
+        "remaining_quantity": 1000
+      },
+      {
+        "price": 48,
+        "discounted_price": 48,
+        "max_inventory": 1000,
+        "inventory": 1000,
+        "images": [
+          {
+            "image_id": 15,
+            "url": "https://maskuat.pokeguide.com/img/1_01_500.jpg"
+          }
+        ],
+        "sku_option_mappings": [
+          {
+            "option_id": 2,
+            "option_value_id": 2
+          },
+          {
+            "option_id": 3,
+            "option_value_id": 6
+          },
+          {
+            "option_id": 4,
+            "option_value_id": 7
+          }
+        ],
+        "sku_id": 8,
+        "remaining_quantity": 1000
+      },
+      {
+        "price": 12,
+        "discounted_price": 12,
+        "max_inventory": 1000,
+        "inventory": 1000,
+        "images": [
+          {
+            "image_id": 16,
+            "url": "https://maskuat.pokeguide.com/img/1_01_500.jpg"
+          }
+        ],
+        "sku_option_mappings": [
+          {
+            "option_id": 2,
+            "option_value_id": 2
+          },
+          {
+            "option_id": 3,
+            "option_value_id": 6
+          },
+          {
+            "option_id": 4,
+            "option_value_id": 9
+          }
+        ],
+        "sku_id": 9,
+        "remaining_quantity": 1000
+      },
+      {
+        "price": 27,
+        "discounted_price": 27,
+        "max_inventory": 1000,
+        "inventory": 1000,
+        "images": [
+          {
+            "image_id": 17,
+            "url": "https://maskuat.pokeguide.com/img/1_01_500.jpg"
+          }
+        ],
+        "sku_option_mappings": [
+          {
+            "option_id": 2,
+            "option_value_id": 3
+          },
+          {
+            "option_id": 3,
+            "option_value_id": 4
+          },
+          {
+            "option_id": 4,
+            "option_value_id": 7
+          }
+        ],
+        "sku_id": 10,
+        "remaining_quantity": 1000
+      },
+      {
+        "price": 26,
+        "discounted_price": 26,
+        "max_inventory": 1000,
+        "inventory": 1000,
+        "images": [
+          {
+            "image_id": 18,
+            "url": "https://maskuat.pokeguide.com/img/1_01_500.jpg"
+          }
+        ],
+        "sku_option_mappings": [
+          {
+            "option_id": 2,
+            "option_value_id": 3
+          },
+          {
+            "option_id": 3,
+            "option_value_id": 4
+          },
+          {
+            "option_id": 4,
+            "option_value_id": 8
+          }
+        ],
+        "sku_id": 11,
+        "remaining_quantity": 1000
+      },
+      {
+        "price": 10,
+        "discounted_price": 10,
+        "max_inventory": 1000,
+        "inventory": 997,
+        "images": [
+          {
+            "image_id": 19,
+            "url": "https://maskuat.pokeguide.com/img/1_01_500.jpg"
+          }
+        ],
+        "sku_option_mappings": [
+          {
+            "option_id": 2,
+            "option_value_id": 3
+          },
+          {
+            "option_id": 3,
+            "option_value_id": 4
+          },
+          {
+            "option_id": 4,
+            "option_value_id": 9
+          }
+        ],
+        "sku_id": 12,
+        "remaining_quantity": 997
+      },
+      {
+        "price": 33,
+        "discounted_price": 33,
+        "max_inventory": 1000,
+        "inventory": 1000,
+        "images": [
+          {
+            "image_id": 20,
+            "url": "https://maskuat.pokeguide.com/img/1_01_500.jpg"
+          }
+        ],
+        "sku_option_mappings": [
+          {
+            "option_id": 2,
+            "option_value_id": 3
+          },
+          {
+            "option_id": 3,
+            "option_value_id": 5
+          },
+          {
+            "option_id": 4,
+            "option_value_id": 7
+          }
+        ],
+        "sku_id": 13,
+        "remaining_quantity": 1000
+      },
+      {
+        "price": 12,
+        "discounted_price": 12,
+        "max_inventory": 1000,
+        "inventory": 1000,
+        "images": [
+          {
+            "image_id": 21,
+            "url": "https://maskuat.pokeguide.com/img/1_01_500.jpg"
+          }
+        ],
+        "sku_option_mappings": [
+          {
+            "option_id": 2,
+            "option_value_id": 3
+          },
+          {
+            "option_id": 3,
+            "option_value_id": 5
+          },
+          {
+            "option_id": 4,
+            "option_value_id": 8
+          }
+        ],
+        "sku_id": 14,
+        "remaining_quantity": 1000
+      },
+      {
+        "price": 17,
+        "discounted_price": 17,
+        "max_inventory": 1000,
+        "inventory": 1000,
+        "images": [
+          {
+            "image_id": 22,
+            "url": "https://maskuat.pokeguide.com/img/1_01_500.jpg"
+          }
+        ],
+        "sku_option_mappings": [
+          {
+            "option_id": 2,
+            "option_value_id": 3
+          },
+          {
+            "option_id": 3,
+            "option_value_id": 6
+          },
+          {
+            "option_id": 4,
+            "option_value_id": 7
+          }
+        ],
+        "sku_id": 15,
+        "remaining_quantity": 1000
+      },
+      {
+        "price": 38,
+        "discounted_price": 38,
+        "max_inventory": 1000,
+        "inventory": 997,
+        "images": [
+          {
+            "image_id": 23,
+            "url": "https://maskuat.pokeguide.com/img/1_01_500.jpg"
+          }
+        ],
+        "sku_option_mappings": [
+          {
+            "option_id": 2,
+            "option_value_id": 3
+          },
+          {
+            "option_id": 3,
+            "option_value_id": 6
+          },
+          {
+            "option_id": 4,
+            "option_value_id": 8
+          }
+        ],
+        "sku_id": 16,
+        "remaining_quantity": 997
+      },
+      {
+        "price": 37,
+        "discounted_price": 37,
+        "max_inventory": 1000,
+        "inventory": 1000,
+        "images": [
+          {
+            "image_id": 24,
+            "url": "https://maskuat.pokeguide.com/img/1_01_500.jpg"
+          }
+        ],
+        "sku_option_mappings": [
+          {
+            "option_id": 2,
+            "option_value_id": 3
+          },
+          {
+            "option_id": 3,
+            "option_value_id": 6
+          },
+          {
+            "option_id": 4,
+            "option_value_id": 9
+          }
+        ],
+        "sku_id": 17,
+        "remaining_quantity": 1000
+      }
+    ],
+    "min_price": 10,
+    "readme": "",
+    "has_pick_up": false,
+    "has_shipping": false,
+    "pick_up_locations": [
+      
+    ],
+    "districts": [
+      
+    ],
+    "regions": [
+      
+    ],
+    "is_sold_out": false
+  }
+}

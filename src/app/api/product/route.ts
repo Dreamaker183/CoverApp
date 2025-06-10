@@ -163,7 +163,7 @@ async function fetchWithRetry(url: string, retries = 3): Promise<Response> {
       const response = await fetch(url, {
         cache: 'no-store',
         headers: { 
-          'Accept': 'application/json',
+          'Accept': '/Users/ansonchan/Downloads/CoverApp-main/src/app/api/product/mask',
           'Cache-Control': 'no-cache',
           'Pragma': 'no-cache',
           'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
