@@ -1,0 +1,139 @@
+{
+  "status": "OK",
+  "good": {
+    "goods_id": 2,
+    "max_per_user": 10,
+    "goods_name": "mask cover",
+    "description": "I am mask cover",
+    "is_enabled": true,
+    "goods_images": [
+      {
+        "image_id": 8,
+        "url": "https://maskuat.pokeguide.com/img/1_01_500.jpg"
+      }
+    ],
+    "options": [
+      {
+        "option_id": 2,
+        "option_name": "size",
+        "can_change_after_payment": false,
+        "option_values": [
+          {
+            "option_value_id": 2,
+            "weight": 1,
+            "option_value_name": "large"
+          },
+          {
+            "option_value_id": 3,
+            "weight": 1,
+            "option_value_name": "small"
+          }
+        ]
+      },
+      {
+        "option_id": 3,
+        "option_name": "color",
+        "can_change_after_payment": false,
+        "option_values": [
+          {
+            "option_value_id": 4,
+            "weight": 1,
+            "option_value_name": "black"
+          },
+          {
+            "option_value_id": 5,
+            "weight": 1,
+            "option_value_name": "yellow"
+          },
+          {
+            "option_value_id": 6,
+            "weight": 1,
+            "option_value_name": "white"
+          }
+        ]
+      },
+      {
+        "option_id": 4,
+        "option_name": "origin",
+        "can_change_after_payment": false,
+        "option_values": [
+          {
+            "option_value_id": 7,
+            "weight": 1,
+            "option_value_name": "HK"
+          },
+          {
+            "option_value_id": 8,
+            "weight": 1,
+            "option_value_name": "Vietnam"
+          },
+          {
+            "option_value_id": 9,
+            "weight": 1,
+            "option_value_name": "Taiwan"
+          }
+        ]
+      }
+    ],
+    "goods_sku": [
+      {
+        "price": 34,
+        "discounted_price": 34,
+        "max_inventory": 1000,
+        "inventory": 0,
+        "images": [
+          {
+            "image_id": 10,
+            "url": "https://maskuat.pokeguide.com/img/1_01_500.jpg"
+          }
+        ],
+        "sku_option_mappings": [
+          {
+            "option_id": 2,
+            "option_value_id": 2
+          },
+          {
+            "option_id": 3,
+            "option_value_id": 4
+          },
+          {
+            "option_id": 4,
+            "option_value_id": 8
+          }
+        ],
+        "sku_id": 3,
+        "remaining_quantity": 0,
+        "is_enabled": true
+      },
+      {
+        "price": 40,
+        "discounted_price": 40,
+        "max_inventory": 1000,
+        "inventory": 999,
+        "images": [
+          {
+            "image_id": 12,
+            "url": "https://maskuat.pokeguide.com/img/1_01_500.jpg"
+          }
+        ],
+        "sku_option_mappings": [
+          {
+            "option_id": 2,
+            "option_value_id": 2
+          },
+          {
+            "option_id": 3,
+            "option_value_id": 5
+          },
+          {
+            "option_id": 4,
+            "option_value_id": 7
+          }
+        ],
+        "sku_id": 5,
+        "remaining_quantity": 999,
+        "is_enabled": true
+      }
+    ]
+  }
+} 

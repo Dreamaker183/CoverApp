@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
 import type { ProductApiResponse, ProductData, ProductOptionGroup, ProductVariant, ProductOption } from '@/types/product';
+import maskData from './mask.json';
 
 // Define interfaces for the external API structure
 interface ExternalApiImage {
   image_id: number;
   url: string;
-  lang: string | null;
-  weighting: number;
+  lang?: string | null;
+  weighting?: number;
 }
 
 interface ExternalApiOptionValue {
@@ -32,14 +33,14 @@ interface ExternalApiGoodsSku {
   discounted_price: number;
   inventory: number;
   max_inventory: number;
-  sold_out_after: number | null;
-  is_donation: boolean;
-  fixed_shipment_price: number;
+  sold_out_after?: number | null;
+  is_donation?: boolean;
+  fixed_shipment_price?: number;
   sku_id: number;
-  unit_id: number | null;
-  remaining_inventory: number;
-  description: string;
-  sku_images: ExternalApiImage[];
+  unit_id?: number | null;
+  remaining_quantity: number;
+  description?: string;
+  sku_images?: ExternalApiImage[];
   images: ExternalApiImage[];
   is_enabled: boolean;
   sku_option_mappings: ExternalApiSkuOptionMapping[];
@@ -131,7 +132,7 @@ function transformExternalGoodToProductData(externalGood: ExternalApiGoodData): 
         name_tc: derivedVariantNameTc,
         name_sc: derivedVariantNameTc,
         option_value_ids: optionValueIds,
-        stock: sku.remaining_inventory,
+        stock: sku.remaining_quantity,
         price: sku.price.toFixed(2),
         image: sku.images?.[0]?.url || externalGood.goods_images?.[0]?.url || null,
       };
@@ -204,25 +205,9 @@ export async function GET() {
   try {
     console.log('Starting product data fetch...');
     
-    // Try primary URL first
-    let response = await fetchWithRetry(PRODUCT_API_URL).catch(error => {
-      console.error('Primary URL failed:', error);
-      return null;
-    });
-    
-    // If primary URL fails, try fallback URL
-    if (!response || !response.ok) {
-      console.log('Trying fallback URL...');
-      response = await fetchWithRetry(FALLBACK_API_URL);
-    }
-
-    if (!response.ok) {
-      console.error('Both URLs failed. Last error:', response.status, response.statusText);
-      throw new Error(`API HTTP Error (${response.status}): ${response.statusText}`);
-    }
-
-    const externalApiResponse: ExternalApiResponse = await response.json();
-    console.log('API response status:', externalApiResponse.status);
+    // Use local JSON data for testing
+    const externalApiResponse: ExternalApiResponse = maskData;
+    console.log('Using local mask data');
 
     if (externalApiResponse.status !== "OK" || !externalApiResponse.good) {
       console.error('Invalid API response:', externalApiResponse);
